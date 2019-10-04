@@ -1,0 +1,78 @@
+<form>
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NIT</mat-label>
+        <input matInput [(ngModel)]="contribuyente.nit" name="nit" readonly>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>TIPO PERSONERIA</mat-label>
+        <input matInput [(ngModel)]="contribuyente.persona" name="tipoPersona" readonly>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>RAZÓN O DENOMINACIÓN SOCIAL</mat-label>
+        <input matInput [(ngModel)]="contribuyente.razonSocial" name="razonSocial" readonly>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NÚMERO DE DOCUMENTO DE CONSTITUCIÓN</mat-label>
+        <input type="number" matInput [(ngModel)]="contribuyente.numeroDocumentoConstitucion" name="numeroDocumentoConstitucion" readonly>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>FECHA DE CONSTITUCIÓN</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="contribuyente.fechaConstitucion" name="fechaConstitucion" readonly>     
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NIT DEL NOTARIO</mat-label>
+        <input matInput [(ngModel)]="contribuyente.nitNotario" name="nitNotario" readonly>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NOMBRE DEL NOTARIO</mat-label>
+        <input matInput [(ngModel)]="contribuyente.nombreNotario" name="nombreNotario" readonly>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NIT DEL REPRESENTANTE LEGAL</mat-label>
+        <input matInput [(ngModel)]="contribuyente.nitRepresentante" name="nitRepresentante" readonly>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NOMBRE DEL REPRESENTANTE LEGAL</mat-label>
+        <input matInput [(ngModel)]="contribuyente.nombreRepresentante" name="nombreRepresentante" readonly>
+      </mat-form-field>
+    </div>
+  </div>
+</form>
+
+<form [formGroup]="formFusion">
+  <div class="row">
+    <div class="col">
+      <mat-form-field>
+        <mat-label>NIT DE FUSIÓN</mat-label>
+        <input type="text" formControlName="nitFusion" matInput #fusion appAutofocus>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <button mat-raised-button class="btn btn-blue-sat" (click)="focus()">Buscar</button>
+    </div>
+  </div>
+</form>

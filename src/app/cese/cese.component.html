@@ -1,0 +1,67 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-blue-sat card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">apartment</i>
+                        </div>
+                        <h4 class="card-title" (click)="obtenerNit()">{{ title }} </h4>
+                    </div>
+                    <div class="card-body">
+                        <div *ngIf="estatus === false">
+                            <h1>Hubo un error, intentelo más tarde</h1>
+                        </div>
+                        <mat-horizontal-stepper *ngIf="estatus === true" linear #stepper data-color="blue-sat" class="div.mat-step-header">
+                            <mat-step [stepControl]="tiposCese" data-color="blue-sat" [editable]="editable">
+                                <ng-template matStepLabel>TIPO DE CESE</ng-template>
+                                <h4>Tipo de Persona: {{ persona }}</h4>
+                                <div *ngIf="tipoPersona > 0">
+                                    <form #formulario [formGroup]="tiposCese" class="form-horizontal" (ngSubmit)="onSubmit()">
+                                        <div class="form-group">
+                                            <div class="row justify-content-center">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label class="col-form-label">Tipo de cese (*)</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <mat-radio-group matInput formControlName="opcion" 
+                                                        required class="example-radio-group" required>
+                                                        <mat-radio-button (click)="getCese(opcion.cod)" class="example-radio-button blue-sat" color="primary" 
+                                                                        *ngFor="let opcion of opciones" style="margin-left: 10%" 
+                                                                        [value]="opcion.cod">
+                                                                    {{ opcion.value }}
+                                                        </mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" mat-button matStepperNext 
+                                                class="btn btn-blue-sat">Continuar</button>
+                                    </form>
+                                </div>
+                                <button *ngIf="tipoPersona === 0" mat-button matStepperNext 
+                                        class="btn btn-blue-sat">Continuar</button>
+                            </mat-step>
+
+                            <mat-step data-color="blue-sat" [editable]="editable" *ngIf="cese === 'fusionAbsorcion'">
+                                <ng-template matStepLabel>CESE POR FUSIÓN O ABSORCIÓN</ng-template>
+                                <app-cese-fusion-absorcion [contribuyente]="contribuyente"></app-cese-fusion-absorcion>
+                                <button mat-button matStepperPrevious class="btn btn-previous btn-fill btn-default btn-wd">Cancelar</button>
+                            </mat-step>
+
+                            <mat-step data-color="blue-sat" [editable]="editable" *ngIf="cese === 'cancTotal'">
+                                    <ng-template matStepLabel>CECE TOTAL</ng-template>
+                                    
+                                </mat-step>
+                        </mat-horizontal-stepper>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

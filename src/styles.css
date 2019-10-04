@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+
+.margen-derecho {
+    margin-right: 2%;
+}
+
+
+/* Color de Bloque par el Grid List */
+
+mat-grid-tile {
+    background: white;
+}
+
+.example-container {
+    height: 450px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.example-sidenav-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.example-sidenav {
+    padding: 20px;
+}
+
+.bg-blue-sat, .mat-checkbox-background {
+    background-color: #1369A0 !important;
+    color: white !important;
+}

@@ -1,0 +1,209 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-blue-sat card-header-icon">
+            <div class="card-icon">
+                <i class="material-icons">apartment</i>
+            </div>
+            <h4 class="card-title" (click)="obtenerNit()">{{ title }} </h4>
+          </div>
+          <div class="card-body">
+            <!-- Tipos de Cancelación -->
+            <mat-horizontal-stepper linear #stepper data-color="blue-sat" class="div.mat-step-header">
+              <mat-step [stepControl]="opciones" data-color="blue-sat" [editable]="editable">
+                <ng-template matStepLabel>TIPO DE CANCELACIÓN</ng-template>
+                <app-opciones (salida)="cancelacion($event)" (formOpciones)="formOpciones($event)"></app-opciones>
+                <button mat-button matStepperNext 
+                        class="btn btn-blue-sat" 
+                        [disabled]="canValue === ''">Continuar</button>
+              </mat-step>
+              <!-- Establecimientos -->
+              <mat-step [stepControl]="formCancelacion" data-color="blue-sat" [editable]="editable">
+                  <ng-template matStepLabel>ESTABLECIMIENTOS</ng-template>
+                <app-establecimiento (resultado)="resultado($event)" (formFechaCanc)="formFechaCanc($event)" [canValue]="canValue" [hidden]="canValue == ''" 
+                  [estado]="estado"></app-establecimiento>
+                  <button mat-button matStepperPrevious class="btn btn-previous btn-fill btn-default btn-wd" (click)="limpiarStepper(stepper)">Cancelar</button>
+              </mat-step>
+              <!-- Verificar datos -->
+              <mat-step [stepControl]="formDecJur" [editable]="editable">
+                  <ng-template matStepLabel>VERIFICAR DATOS</ng-template>
+                  <!-- Validación de declaraciones anteriores -->
+                  <div class="row" *ngIf="validaciones.puedeCancelar === true">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show" *ngIf="listaSeleccion.length > 1">
+                      <strong>Error: Existen retenciones de IVA realizadas que no fueron
+                        reportadas en su declaración de IVA en el periodo indicado. Debe
+                        rectificar las declaraciones de IVA presentadas para realizar la cancelación
+                        del establecimiento
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+                  
+                  <!-- Validación de documentos autorizados -->
+                  <div class="row" *ngIf="validaciones.docAutorizados === true">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show">
+                      <strong>Error: Tiene documentos autorizados en los 4 años
+                        anteriores a la fecha actual, debe seleccionar la opción
+                        Cancelación definitiva
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+
+                  <!-- Validación de representantes legales -->
+                  <div class="row" *ngIf="validaciones.estatusJuridico === true && validaciones.existenRepresentantes === false">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show">
+                      <strong>Error: Debe de tener registrado un representante legal activo vigente
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+        
+                  <!-- Validación de declaraciones diferentes a 0 -->
+                  <div class="row" *ngIf="validaciones.declaracionesCero === true">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show">
+                      <strong>Error. Ha presentado declaraciones en los últimos 4 años, debe seleccionar la opción Cancelación definitiva.
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+
+                  <!-- Validación de vehiculos -->
+                  <div class="row" *ngIf="validaciones.existenVehiculos === true && res.estabActivos == 1">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show">
+                      <strong>Error. Tiene registro de vehículos activos con placas de trabajo, 
+                              no es posible realizar la cancelación temporal del establecimiento.
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+                  
+                  <div *ngIf="res != null">
+                    <h4>Motivo de la cancelación: {{ mCancelacion }}</h4>
+                    <div *ngIf="estatusJuridico === true && res.canValue === 'cancPrescrita'">
+                      <form [formGroup]="formMercantil" class="form-horizontal">
+                        <div class="form-group">
+                          <div class="row justify-content-center">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-2">
+                              <div class="form-group">
+                                <label class="col-form-label">Adjuntar cancelación registro mercantíl (*)</label>
+                              </div>
+                            </div>
+                            <div class="col-md-4">
+                              <div class="card">
+                                <div class="card-header card-header-text card-header-blue-sat">
+                                    <div class="card-text">
+                                        <label for="fileDocMercantil">Seleccionar Archivo</label>
+                                        <input type="file" id="fileDocMercantil" (change)="handleFileInput($event.target.files)" formControlName="archivoMercantil">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="btn btn-blue-sat btn-fill" (click)="cargarArchivo()" *ngIf="archivoValido===true">Abrir</button>
+                                    <button (click)="limpiaArchivo()" class="btn btn-danger btn-fill" *ngIf="archivoValido===true && cargaExitosaDocMercantil === false" (click)="limpiarStepper(stepper)">Cancelar</button>
+                                    <button class="btn btn-blue-sat btn-fill" (click)="obtenerArchivo()" *ngIf="cargaExitosaDocMercantil === true">Visualizar</button>
+                                    <button (click)="Alerta('eliminarArchivoResolucion')" class="btn btn-danger btn-fill" *ngIf="cargaExitosaDocMercantil === true">Eliminar</button>
+                                </div>
+                                <div>
+                                    <div *ngIf="(urlArchivoMercantil != undefined && cargaExitosaDocMercantil)">
+                                        <iframe class="visualizar" [attr.src]="urlArchivoMercantil" type="application/pdf"></iframe>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-3"></div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div>
+                      <button mat-button matStepperPrevious class="btn btn-previous btn-fill btn-default btn-wd " (click)="limpiarStepper(stepper)">Cancelar</button>
+                      <button mat-button *ngIf="validaciones.estatusIndividual === true"
+                        class="btn btn-blue-sat"
+                        data-toggle="modal" data-target="#envioModal"
+                        [hidden]="estatusVal">Enviar Solicitud</button>
+                        <button mat-button *ngIf="validaciones.estatusJuridico === true"
+                        class="btn btn-blue-sat"
+                        data-toggle="modal" data-target="#envioModal"
+                        [disabled]="fileDocMercantil === null">Enviar Solicitud</button>
+                        <!-- Modal Envio -->
+                      <div class="modal fade" id="envioModal" tabindex="-1" role="dialog" aria-labelledby="cancelacionModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="container">
+                                  <p>Declaro y juro que los datos contenidos en la presente
+                                    solicitud son verídicos y que conozco la pena de los delitos
+                                    de perjurío y de la falsedad de conformidad con lo 
+                                    estipulado en los artículos <b>459</b> y <b>460</b> del Código Penal
+                                    Guatemalteco.
+                                  </p>
+                                  <form [formGroup]="formDecJur" 
+                                      #formDec="ngForm"
+                                      novalidate="">
+                                    <mat-checkbox #acepto formControlName="aceptoDec" required>Aceptar</mat-checkbox> 
+                                    <br>
+                                    <button mat-button matStepperNext
+                                            data-dismiss="modal"
+                                            type="submit"
+                                            [disabled]="!acepto.checked"
+                                            (click)="completar()"
+                                            class="btn btn-blue-sat">Continuar
+                                    </button>
+                                  </form>
+                                </div>
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+              </mat-step>
+              <!-- Fin de la solicitud -->
+              <mat-step>
+                  <ng-template matStepLabel>FIN DE LA SOLICITUD</ng-template>
+                    <div *ngIf="canValue === 'cancPrescrita' && envioSolicitud === true">
+                        <h4>La solicitud de Cancelación Prescrita de 
+                            Establecimientos ha sido enviada. Se notificará 
+                            a su buzón SAT la aprobación de la gestión.
+                        </h4>
+                    </div>
+
+                    <!-- Validación de envio de solicitud -->
+                  <div class="row" *ngIf="envioSolicitud === false">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 alert alert-danger alert-dismissible fade show">
+                      <strong>Error. Lo sentimos, no se ha podido enviar la solicitud, intente más tarde.
+                      </strong> 
+                    </div>
+                    <div class="col-md-4"></div>
+                  </div>
+                    
+                  <div>
+                      <button (click)="nuevaSolicitud(stepper)"
+                              mat-button class="btn btn-blue-sat">Nueva
+                          Solicitud</button>
+                  </div>
+              </mat-step>
+            </mat-horizontal-stepper>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

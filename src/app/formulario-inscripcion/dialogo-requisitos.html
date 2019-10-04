@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>Requisitos</h1>
+<div mat-dialog-content>
+    <div class="material-datatables">
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort style="width: 100%"
+                class="table table-striped table-no-bordered table-hover" cellspacing="0">
+                <!-- ciiu -->
+                <ng-container matColumnDef="requisito">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Requisito </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                </ng-container>
+
+                <!-- nombre -->
+                <ng-container matColumnDef="nacionalidad">
+                    <th mat-header-cell *matHeaderCellDef> Nacionalidad </th>
+                    <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let element; columns: displayedColumns;">
+                    ></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="btnRegresar()">Regresar</button>
+
+</div>

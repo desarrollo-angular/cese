@@ -1,0 +1,528 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card ">
+          <div class="card-header card-header-blue-sat card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">list</i>
+            </div>
+            <h4 class="card-title">Identificación Empresa/Organización</h4>
+          </div>
+          <div class="card-body ">
+
+            <form [formGroup]="inputForm" (change)="onChangeForm()">
+
+
+              <!-- Tipo de personería -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Tipo de personería (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Tipo de personería" name="tipoPersoneria" formControlName="tipoPersoneria"
+                      (selectionChange)="onSelectionChangeTipoPersoneria($event.value)" required>
+                      <mat-option *ngFor="let tipoPersoneria of listaTiposPersoneria" [value]="tipoPersoneria.codigo">
+                        {{ tipoPersoneria.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['tipoPersoneria'].hasError('required')">
+                      Por favor seleccione un Tipo de personería
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Tipo de personería -->
+
+
+              <!-- Banco o financiera fiduciaria -->
+              <div class="row justify-content-center" [hidden]="!fiduciariaRequerido || esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Banco o financiera fiduciaria (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Banco o financiera fiduciaria" name="tipoFiduciaria" formControlName="tipoFiduciaria"
+                      (selectionChange)="onSelectionChangeTipoFiduciaria($event.value)">
+                      <mat-option *ngFor="let tipoFiduciaria of listaTiposFiduciaria" [value]="tipoFiduciaria.codigo">
+                        {{ tipoFiduciaria.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['tipoFiduciaria'].hasError('required')">
+                      Por favor seleccione un Banco o financiera fiduciaria
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Tipo de personería -->
+
+
+              <!-- Razón o denominación social -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Razón o denominación social (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Razón o denominación social (*)" class="form-control" type="text" name="razonSocial"
+                        matInput formControlName="razonSocial" maxlength="100" (change)="onChangeRazonSocial($event)" />
+                      <mat-error *ngIf="inputForm.controls['razonSocial'].hasError('required')">
+                        Por favor ingrese la Razón o denominación social
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['razonSocial'].hasError('pattern')">
+                        Por favor ingrese un valor alfanumérico (letras y números)
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['razonSocial'].hasError('incorrecto')">
+                        {{txtError}}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Razón o denominación social -->
+
+              <br />
+
+              <!-- Fecha de constitución -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Fecha de constitución (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerConstitucion"
+                      placeholder="Fecha de Constitución" formControlName="fechaConstitucion"
+                      (change)="onChangeFechaConstitucion($event)" (dateChange)="onChangeFechaConstitucion($event)"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerConstitucion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerConstitucion> </mat-datepicker>
+                    <mat-error *ngIf="inputForm.controls['fechaConstitucion'].hasError('required')">
+                      Por favor ingrese la Fecha de constitución
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaConstitucion'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaConstitucion'].hasError('matDatepickerMax')">La fecha no puede ser mayor al año actual</mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaConstitucion'].hasError('matDatepickerMin')">La fecha debe ser mayor a 1900</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Fecha de constitución -->
+
+
+              <!-- Tipo de documento de constitución -->
+              <div class="row justify-content-center" *ngIf="!esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Tipo de documento de constitución (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Tipo de documento de constitución" name="tipoDoctoConstitucion"
+                      formControlName="tipoDoctoConstitucion" (selectionChange)="onSelectionChangeTipoDoctoConstitucion($event.value)"
+                      required>
+                      <mat-option *ngFor="let tipoDoctoConstitucion of listaTiposDoctoConstitucion" [value]="tipoDoctoConstitucion.codigo">
+                        {{ tipoDoctoConstitucion.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['tipoDoctoConstitucion'].hasError('required')">
+                      Por favor seleccione un Tipo de documento de constitución
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Tipo de documento de constitución -->
+
+
+              <!-- Número de documento de constitución -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Número de documento de constitución (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Número de documento de constitución (*)" class="form-control" type="number"
+                        name="numeroDoctoConstitucion" matInput formControlName="numeroDoctoConstitucion"
+                        (change)="onChangeNumber_DoctoConstitucion($event)" />
+                      <mat-error *ngIf="inputForm.controls['numeroDoctoConstitucion'].hasError('required')">
+                        Por favor ingrese el Número de documento de constitución
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['numeroDoctoConstitucion'].hasError('pattern')">
+                        Por favor ingrese un valor numérico
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Número de documento de constitución -->
+
+
+              <!-- NIT de Notario  -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">NIT de Notario (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="NIT de Notario (*)" class="form-control" type="text" name="nitNotario"
+                        matInput formControlName="nitNotario" maxlength="20" (change)="onChangeNitNotario($event)"
+                        required />
+                      <mat-error *ngIf="inputForm.controls['nitNotario'].hasError('required')">
+                        Por favor ingrese el NIT de Notario
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nitNotario'].hasError('pattern')">
+                        Por favor ingrese un valor alfanumérico (letras y números)
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nitNotario'].hasError('incorrecto')">
+                        {{txtError}}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- NIT de Notario -->
+
+
+              <!-- Nombre del Notario  -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Nombre del Notario (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Nombre del Notario (*)" class="form-control" type="text" name="nombreNotario"
+                        matInput formControlName="nombreNotario" maxlength="100" />
+                      <mat-error *ngIf="inputForm.controls['nombreNotario'].hasError('required')">
+                        Por favor ingrese el Nombre del Notario
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nombreNotario'].hasError('pattern')">
+                        Por favor ingrese un valor alfanumérico (letras y números)
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Nombre del Notario -->
+
+
+              <!-- Adjuntar documento de constitución -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Adjuntar documento de constitución (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                    <h4>Formatos de Archivos Permitidos JPG, PNG, PDF el tamaño máximo permitido es de 10 Mb</h4>
+                  <div class="form-group">
+                    <!-- Adjuntar documento -->
+                    <div class="card">
+                        <div class="card-header card-header-text card-header-blue-sat">
+                            <div class="card-text">
+                                <label for="fileConstitucion">Seleccionar Archivo</label>
+                                <input type="file" id="fileConstitucion" (change)="handleFileInput($event.target.files,1)">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-blue-sat btn-fill" (click)="cargarArchivo(1)" *ngIf="archivoValido===true">Abrir</button>
+                            <button (click)="limpiarArchivos(1)" class="btn btn-danger btn-fill" *ngIf="archivoValido===true && cargaExitosaConstitucion===false">Cancelar</button>
+                            <button class="btn btn-blue-sat btn-fill" (click)="obtenerArchivo(1)" *ngIf="cargaExitosaConstitucion===true">Visualizar</button>
+                            <button (click)="Alerta('eliminarArchivoConstitucion')" class="btn btn-danger btn-fill" *ngIf="cargaExitosaConstitucion===true">Eliminar</button>
+                        </div>
+                            <div >
+                                <div *ngIf="(urlArchivoConstitucion != undefined && cargaExitosaConstitucion===true)">                                            
+                                    <iframe width="100%" height="50%" [attr.src]="urlArchivoConstitucion" type="application/pdf"></iframe>                                           
+                                </div>
+                            </div>                        
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Adjuntar documento de constitución -->
+
+
+              <!-- Adjuntar patente de empresa -->
+              <div class="row justify-content-center" *ngIf="requierePatente==true && !esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Adjuntar patente de empresa (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                    <h4>Formatos de Archivos Permitidos JPG, PNG, PDF el tamaño máximo permitido es de 10 Mb</h4>
+                  <div class="form-group">
+                    <!-- Adjuntar documento -->
+                    <div class="card">
+                        <div class="card-header card-header-text card-header-blue-sat">
+                            <div class="card-text">
+                                <label for="filePatente">Seleccionar Archivo</label>
+                                <input type="file" id="filePatente" (change)="handleFileInput($event.target.files,2)">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-blue-sat btn-fill" (click)="cargarArchivo(2)" *ngIf="archivoValido===true">Abrir</button>
+                            <button (click)="limpiarArchivos(2)" class="btn btn-danger btn-fill" *ngIf="archivoValido===true && cargaExitosaPatente===false">Cancelar</button>
+                            <button class="btn btn-blue-sat btn-fill" (click)="obtenerArchivo(2)" *ngIf="cargaExitosaPatente===true">Visualizar</button>
+                            <button (click)="Alerta('eliminarArchivoPatente')" class="btn btn-danger btn-fill" *ngIf="cargaExitosaPatente===true">Eliminar</button>
+                        </div>
+                            <div >
+                                <div *ngIf="(urlArchivoPatente != undefined && cargaExitosaPatente===true)">                                            
+                                    <iframe width="100%" height="50%" [attr.src]="urlArchivoPatente" type="application/pdf"></iframe>                                           
+                                </div>
+                            </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Adjuntar patente de empresa -->
+
+
+              <!-- Fecha de inscripción en el registro -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Fecha de inscripción en el registro (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerInscripcion"
+                      placeholder="Fecha de inscripción en el registro"
+                      formControlName="fechaInscripcion" (change)="onChangeFechaInscripcion($event)" (dateChange)="onChangeFechaInscripcion($event)"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerInscripcion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInscripcion> </mat-datepicker>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('required')">
+                      Por favor ingrese la Fecha de inscripción en el registro
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('matDatepickerMax')">La fecha no puede ser mayor al año actual</mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('matDatepickerMin')">La fecha debe ser mayor a 1900</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Fecha de constitución -->
+
+
+              <!-- Registro externo -->
+              <div class="row justify-content-center" [hidden]="inputForm.controls['registroExterno'].value==null || esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Registro externo</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Registro externo" class="form-control" type="text" name="registroExterno" matInput
+                        formControlName="registroExterno" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Registro externo -->
+
+
+              <!-- Sector económico -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Sector económico (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Sector económico" name="sectorEconomico" formControlName="sectorEconomico"
+                      (selectionChange)="onSelectionChangeSectorEconomico($event.value)" required>
+                      <mat-option *ngFor="let sectorEconomico of listaSectoresEconomicos" [value]="sectorEconomico.codigo">
+                        {{ sectorEconomico.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['sectorEconomico'].hasError('required')">
+                      Por favor seleccione un Sector económico
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Sector económico -->
+
+
+              <!-- Participación en Cámaras Empresariales -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Participación en Cámaras Empresariales (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="participacionEmpresarial" value="SI"
+                        formControlName="participacionEmpresarial"> SI
+                      <span class="circle">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="participacionEmpresarial" value="NO"
+                        formControlName="participacionEmpresarial"> NO
+                      <span class="circle">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!-- Participación en Cámaras Empresariales -->
+
+
+              <!-- Nombre de la Cámara Empresarial -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Nombre de la Cámara Empresarial (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Nombre de la Cámara Empresarial" name="camaraEmpresarial"
+                      formControlName="camaraEmpresarial" (selectionChange)="onSelectionChangeCamaraEmpresarial($event.value)"
+                      required>
+                      <mat-option *ngFor="let camaraEmpresarial of listaCamarasEmpresariales" [value]="camaraEmpresarial.codigo">
+                        {{ camaraEmpresarial.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['camaraEmpresarial'].hasError('required')">
+                      Por favor seleccione Nombre de la Cámara Empresarial
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Nombre de la Cámara Empresarial -->
+
+
+              <!-- Participación en Gremiales -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Participación en Gremiales (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="participacionGremial" value="SI"
+                        formControlName="participacionGremial"> SI
+                      <span class="circle">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="participacionGremial" value="NO"
+                        formControlName="participacionGremial"> NO
+                      <span class="circle">
+                        <span class="check"></span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!-- Participación en Gremiales -->
+
+
+              <!-- Nombre Gremial -->
+              <div class="row justify-content-center" [hidden]="esDelegado">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Nombre Gremial (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Nombre Gremial" name="gremial"
+                      formControlName="gremial" (selectionChange)="onSelectionChangeGremial($event.value)"
+                      required>
+                      <mat-option *ngFor="let gremial of listaGremiales" [value]="gremial.codigo">
+                        {{ gremial.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['gremial'].hasError('required')">
+                      Por favor seleccione Nombre Gremial
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Nombre Gremial -->
+
+              <div class="row justify-content-center">
+                <!-- boton continuar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" [disabled]="msgError!=null" (click)="onContinuar()">Continuar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton agregar -->
+
+                <!-- boton limpiar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" (click)="onLimpiar()">limpiar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton limpiar -->
+              </div>
+
+              <!-- Mensajes -->
+              <div [hidden]="msgAviso==null">
+                <div class="alert alert-warning">
+                  <span> {{msgAviso}} </span>
+                </div>
+              </div>
+
+              <div [hidden]="msgExito==null">
+                <div class="alert alert-success">
+                  <span> {{msgExito}} </span>
+                </div>
+              </div>
+
+              <div [hidden]="msgError==null">
+                <div class="alert alert-danger">
+                  <span> {{msgError}} </span>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

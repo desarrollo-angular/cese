@@ -1,0 +1,31 @@
+export interface SatContribuyenteIndividual{
+  nit: string;
+  primerNombre: string;
+  segundoNombre: string;
+  primerApellido: string;
+  segundoApellido: string;
+  apellidoCasada: string;
+  tipoNit: number;
+  cui: string;
+  fechaEmisionDpi: string;
+  fechaVencimientoDpi: string;
+  cedulaNumero: string;
+  cedulaRegistro: string;
+  pasaporte: string;
+  fechaNacimiento: string;
+  sexo: string;
+  codigoEstadoCivil: number;
+  codigoNacionalidad: number;
+  codigoPais: number;
+  codPoblacionLinguistica: number;
+  codComunidadLinguistica: number;
+  fechaFallecimiento: string;
+  importador: string;
+  proveedorEstado: string;
+  proveedorSat: string;
+  numeroIgss: string;
+  usuarioAdiciono: string;
+  usuarioModifico: string;
+  fechaAdiciono: string | Date;
+  fechaModifico: string;
+}

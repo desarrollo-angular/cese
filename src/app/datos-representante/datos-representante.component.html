@@ -1,0 +1,355 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card ">
+          <div class="card-header card-header-blue-sat card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">list</i>
+            </div>
+            <h4 class="card-title">Datos del Representante Legal</h4>
+          </div>
+          <div class="card-body ">
+
+            <form [formGroup]="inputForm" (change)="onChangeForm()">
+
+              <!-- NIT del representante  -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">NIT del representante (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="NIT del representante" class="form-control" type="text" name="nitRepresentante"
+                        matInput formControlName="nitRepresentante" maxlength="20" (change)="onChangeNitRepresentante($event)"
+                        required />
+                      <mat-error *ngIf="inputForm.controls['nitRepresentante'].hasError('required')">
+                        Por favor ingrese el NIT del representante
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nitRepresentante'].hasError('pattern')">
+                        Por favor ingrese un valor alfanumérico (letras y números)
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nitRepresentante'].hasError('incorrecto')">
+                        {{txtError}}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- NIT del representante -->
+
+
+              <!-- Nombre del Representante  -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Nombres y apellidos (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Nombres y apellidos (*)" class="form-control" type="text" name="nombreRepresentante"
+                        matInput formControlName="nombreRepresentante" maxlength="100" />
+                      <mat-error *ngIf="inputForm.controls['nombreRepresentante'].hasError('required')">
+                        Por favor ingrese el Nombre del Representante
+                      </mat-error>
+                      <mat-error *ngIf="inputForm.controls['nombreRepresentante'].hasError('pattern')">
+                        Por favor ingrese un valor alfanumérico (letras y números)
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Nombre del Representante -->
+
+
+              <!-- Tipo de representante -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Tipo de representante (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Tipo de representante" name="tipoRepresentante" formControlName="tipoRepresentante"
+                      (selectionChange)="onSelectionChangeTipoRepresentante($event.value)" required>
+                      <mat-option *ngFor="let tipoRepresentante of listaTiposRepresentante" [value]="tipoRepresentante.codigo">
+                        {{ tipoRepresentante.nombre }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['tipoRepresentante'].hasError('required')">
+                      Por favor seleccione un Tipo de representante
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Tipo de representante -->
+
+
+              <!-- Fecha de nombramiento como representante legal -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Fecha de nombramiento como representante legal (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerConstitucion"
+                      placeholder="Fecha de nombramiento como representante legal" formControlName="fechaNombramiento"
+                      (change)="onChangeFechaNombramiento($event)" (dateChange)="onChangeFechaNombramiento($event)"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerConstitucion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerConstitucion> </mat-datepicker>
+                    <mat-error *ngIf="inputForm.controls['fechaNombramiento'].hasError('required')">
+                      Por favor ingrese la Fecha de nombramiento como representante legal
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaNombramiento'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaNombramiento'].hasError('matDatepickerMax')">La fecha no
+                      puede ser mayor al año actual</mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaNombramiento'].hasError('matDatepickerMin')">La fecha
+                      debe ser mayor a 1900</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Fecha de nombramiento como representante legal -->
+
+
+              <!-- Fecha de inscripción en el registro -->
+              <div class="row justify-content-center" *ngIf="!this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Fecha de inscripción en el registro (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerInscripcion"
+                      placeholder="Fecha de inscripción en el registro" formControlName="fechaInscripcion" (change)="onChangeFechaInscripcion($event)"
+                      (dateChange)="onChangeFechaInscripcion($event)" required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerInscripcion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInscripcion> </mat-datepicker>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('required')">
+                      Por favor ingrese la Fecha de inscripción en el registro
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('matDatepickerMax')">La fecha no
+                      puede ser mayor al año actual</mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaInscripcion'].hasError('matDatepickerMin')">La fecha
+                      debe ser mayor a 1900</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Fecha de inscripción en el registro -->
+
+
+              <!-- Cantidad de años de la representación -->
+              <div class="row justify-content-center" *ngIf="!this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Cantidad de años de la representación</label>
+                  </div>
+                </div>
+                <div class="col-sm-4" *ngIf="mostrarListaAnios==true">
+                  <mat-form-field>
+                    <mat-select placeholder="Cantidad de años de la representación" name="listaAniosRepresentacion"
+                      formControlName="listaAniosRepresentacion" (selectionChange)="onSelectionChangeAniosRepresentacion($event.value)"
+                      >
+                      <mat-option *ngFor="let anios of listaAnios" [value]="anios">
+                        {{ anios }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['listaAniosRepresentacion'].hasError('required')">
+                      Por favor seleccione la Cantidad de años de la representación
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-sm-4" *ngIf="mostrarListaAnios==false">
+                  <mat-form-field>
+                    <input placeholder="" type="number" matInput formControlName="aniosRepresentacion" />
+                  </mat-form-field>
+                </div>
+
+              </div>
+              <!-- Cantidad de años de la representación -->
+
+
+              <!-- Vigente Hasta -->
+              <div class="row justify-content-center" *ngIf="!this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Vigente Hasta (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerVigenteHasta"
+                      placeholder="Vigente Hasta" (click)="pickerVigenteHasta.open()" formControlName="fechaVigenteHasta"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerVigenteHasta"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerVigenteHasta> </mat-datepicker>
+                    <mat-error *ngIf="inputForm.controls['fechaVigenteHasta'].hasError('required')">
+                      Por favor ingrese la Vigente Hasta
+                    </mat-error>
+                    <mat-error *ngIf="inputForm.controls['fechaVigenteHasta'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Vigente Hasta -->
+
+
+              <!-- Estado representante -->
+              <div class="row justify-content-center" *ngIf="!this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Estado (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field>
+                    <mat-select placeholder="Estado" formControlName="estadoRepresentante" (selectionChange)="onSelectionChangeEstadoRepresentante($event.value)">
+                      <mat-option *ngFor="let estadoRepresentante of listaTiposEstado" [value]="estadoRepresentante.codigo"
+                        [disabled]="estadoRepresentante.descripcion=='Inactivo' && esInscripcion">
+                        {{ estadoRepresentante.descripcion }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="inputForm.controls['estadoRepresentante'].hasError('required')">
+                      Por favor seleccione un Estado
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Estado representante -->
+
+
+              <!-- Adjuntar nombramiento -->
+              <div class="row justify-content-center" *ngIf="!this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Adjuntar nombremiento</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <h4>Formatos de Archivos Permitidos JPG, PNG, PDF el tamaño máximo permitido es de 10 Mb</h4>
+                  <div class="form-group">
+                    <!-- Adjuntar documento -->
+                    <div class="card">
+                      <div class="card-header card-header-text card-header-blue-sat">
+                        <div class="card-text">
+                          <label for="fileAdjunto">Seleccionar Archivo</label>
+                          <input type="file" id="fileAdjunto" (change)="handleFileInput($event.target.files,1)">
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <button class="btn btn-blue-sat btn-fill" (click)="cargarArchivo(1)"
+                          *ngIf="archivoValido===true">Abrir</button>
+                        <button (click)="limpiarArchivos(1)" class="btn btn-danger btn-fill"
+                          *ngIf="archivoValido===true && cargaExitosaAdjunto===false">Cancelar</button>
+                        <button class="btn btn-blue-sat btn-fill" (click)="obtenerArchivo(1)"
+                          *ngIf="cargaExitosaAdjunto===true">Visualizar</button>
+                        <button (click)="Alerta('eliminarArchivoAdjunto')" class="btn btn-danger btn-fill"
+                          *ngIf="cargaExitosaAdjunto===true">Eliminar</button>
+                      </div>
+                      <div>
+                        <div *ngIf="(urlArchivoAdjunto != undefined && cargaExitosaAdjunto===true)">
+                          <iframe width="100%" height="50%" [attr.src]="urlArchivoAdjunto" type="application/pdf"></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Adjuntar nombramiento -->
+
+
+              <!-- Correo electrónico Representante -->
+              <div class="row justify-content-center" *ngIf="this.rolColaboradorDelegadoRTU">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Correo electrónico Representante</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Correo electrónico" class="form-control" type="email" name="correoElectronico"
+                        matInput formControlName="correoElectronico" />
+                      <mat-error *ngIf="inputForm.controls['correoElectronico'].hasError('pattern')">
+                        Error. El correo no es válido
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <!-- Correo electrónico Representante -->
+
+
+              <div class="row justify-content-center">
+                <!-- boton agregar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" [disabled]="msgError!=null" (click)="onAgregar()">Agregar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton agregar -->
+
+                <!-- boton limpiar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" (click)="onLimpiar()">limpiar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton limpiar -->
+              </div>
+
+              <!-- Mensajes -->
+              <div [hidden]="msgAviso==null">
+                <div class="alert alert-warning">
+                  <span> {{msgAviso}} </span>
+                </div>
+              </div>
+
+              <div [hidden]="msgExito==null">
+                <div class="alert alert-success">
+                  <span> {{msgExito}} </span>
+                </div>
+              </div>
+
+              <div [hidden]="msgError==null">
+                <div class="alert alert-danger">
+                  <span> {{msgError}} </span>
+                </div>
+              </div>
+
+              <!-- COMUNICACION CON COMPONENTE DATOS-REPRESENTANTE-TABLA -->
+              <!-- la variable _inDatosRepresentante en el otro componente se asocia a la varible _outDatosRepresentante y reacciona a cambios en ésta -->
+              <!-- la variable _outDatosRepresentante en el otro componente emite un evento que ejecuta el metodo _inDatosRepresentante -->
+              <!-- <app-datos-representante-tabla 
+              [_inDatosRepresentante]="_outDatosRepresentante"
+              (_outDatosRepresentante)="recibirDatosRepresentantes($event)"
+              (_outTablaRepresentantes)='recibirListaRepresentantes($event)'
+              [_inListaDatosRepresentante]="datosRepresentanteSalidaTabla">
+              </app-datos-representante-tabla> -->
+              <!-- COMUNICACION CON COMPONENTE DATOS-REPRESENTANTE-TABLA -->
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="main-context">
+  <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-blue-sat card-header-icon">
+              <div class="card-icon">
+                <i class="material-icons">person_add_disabled</i>
+              </div>
+              <h3 class="card-title">Cese en RTU funcionario o diplomático</h3>
+            </div>
+            <div class="card-body">
+                <mat-horizontal-stepper linear #stepper data-color="blue-sat" class="div.mat-step-header">
+                    <mat-step [stepControl]="tiposCese" data-color="blue-sat" [editable]="editable">
+                        <ng-template matStepLabel>Generar Solicitud</ng-template>   
+                        <form (ngSubmit)="enviar()" [formGroup]='formulario'>
+                            <!-- INGRESO NIT -->
+                           <div class="row">
+                               <div class="col">
+                                   <mat-form-field appearance="legacy">
+                                       <!-- [(ngModel)]="datosContacto.correo1" onpaste="return false" (keyup)="validar(correo1, confCorreo1, 'confCorreo1')" -->
+                                     <input #nit formControlName="nit" (keypress)="omit_special_char($event)"
+                                     (keyup)="validaUpper($event)"matInput [(ngModel)]="ob.nit"
+                                     (click)="clean_name()" [value]="ob.nit" placeholder="Ingrese Nit" type="text"
+                                       class="form-control" (keydown.space)="$event.preventDefault();">
+                                     <mat-hint *ngIf="controlCarga==true">
+                                         Cargando...
+                                     </mat-hint>  
+                                   </mat-form-field>
+                                   
+                                   <!--Valida si el nit cuenta con un digito verificador correcto -->
+                                   <mat-error *ngIf="formulario.hasError('invalidNit')">
+                                       <strong>Error.</strong>El NIT es inválido.
+                                     </mat-error>
+                                   <!--Valida si el nit existe en RTU -->
+                                   <mat-error *ngIf="formulario.hasError('non-existentNit')">
+                                     <strong>Error.</strong> El NIT no existe en la SAT.
+                                    </mat-error>  
+                                    <!--Valida si el nit es generico -->
+                                   <mat-error *ngIf="formulario.hasError('genericNit')">
+                                     <strong>Error.</strong> El NIT es inválido.
+                                    </mat-error> 
+                                     <!--Valida si el nit  -->
+                                   <mat-error *ngIf="formulario.hasError('fallecimientoNit')">
+                                     <strong>Error.</strong> El NIT se encuentra inactivo por fecha de fallecimiento.
+                                    </mat-error>
+                                    <mat-error *ngIf="formulario.hasError('inactiveNit')">
+                                     <strong>Error.</strong> El NIT se encuentra inactivo.
+                                    </mat-error>
+                                 </div>
+                                 <div class="col">
+                                     <button (click)="infoCarga()" [disabled]="!formulario.valid" type="submit" class="btn btn-primary mb-2">Consultar</button> 
+                                 </div>
+                                 <div class="col"></div>
+                           </div>
+                         </form>     
+
+                         <form [formGroup]='formulario'  *ngIf="existeContribuyente" >
+                            <div class="row">
+                                <div class="form-group col-md-12"> <mat-card-subtitle>Datos Contribuyente</mat-card-subtitle> </div>
+                            </div>
+                            <div class="row">
+                                  <div class="form-group col-md-0"></div>
+                                <div class="form-group col-md-6">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="Nombre Contribuyente" [value]="nombreContribuyente" readonly="true"> 
+                                      </mat-form-field>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="{{tipoDocumento}}" [value]="informacionContribuyente.cuiPassaporte" readonly="true">
+                                      </mat-form-field>
+                                </div>
+                              </div>   
+                              <div class="row">
+                                  <div class="form-group col-md-0"></div>
+                                <div class="form-group col-md-6">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="Nacionalidad" [value]="informacionContribuyente.nacionalidad" readonly="true"> 
+                                      </mat-form-field>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <mat-form-field class="example-full-width">
+                                        <input matInput placeholder="Tipo de Personeria" [value]="informacionContribuyente.tipoPersoneria" readonly="true">
+                                      </mat-form-field>
+                                </div>
+                              </div>              
+                            </form>
+                         <div class="card-body">
+              </div>
+                      </mat-step>
+                      <mat-step [stepControl]="tiposCese" data-color="blue-sat" [editable]="editable">
+                          <ng-template matStepLabel>Generar Solicitud</ng-template>  
+                         </mat-step>
+                </mat-horizontal-stepper>
+                
+            </div>
+            
+            <div>
+            </div>
+          </div>
+     </div>
+    </div>
+  </div>
+</div>

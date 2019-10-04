@@ -1,0 +1,27 @@
+<form [formGroup]="opciones" class="form-horizontal">
+  <div class="form-group">
+    <div class="row justify-content-center">
+      <div class="col-md-3"></div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label class="col-form-label">{{ title }} (*)</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <mat-radio-group matInput formControlName="opcion" 
+                          required class="example-radio-group" required>
+            <mat-radio-button class="example-radio-button blue-sat" color="primary" 
+                              *ngFor="let cancelacion of cancelaciones" style="margin-left: 10%" 
+                              [value]="cancelacion.value"
+                              (click)="mostrar(cancelacion.value)">
+                          {{ cancelacion.viewValue }}
+                <!-- <mat-icon matTooltip={{row.descripcion}}> help </mat-icon> -->
+
+            </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+  </div>
+  
+</form>

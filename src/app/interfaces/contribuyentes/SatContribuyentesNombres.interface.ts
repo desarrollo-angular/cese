@@ -1,0 +1,16 @@
+export interface SatContribuyenteNombres {
+    apellidoCasada: string | null,
+    codigoTipo: number | null,
+    estado: number | null,
+    fechaEstado: Date | null,
+    nit: string,
+    nitConyuge: string | null,
+    nitMadre: string | null,
+    nitPadre: string | null,
+    primerApellido: string | null,
+    primerNombre: string | null,
+    razonSocial: string | null,
+    segundoApellido: string | null,
+    segundoNombre: string | null,
+    tercerNombre: string | null,
+}

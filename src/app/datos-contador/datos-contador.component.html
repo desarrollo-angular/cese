@@ -1,0 +1,205 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card ">
+          <div class="card-header card-header-blue-sat card-header-icon">
+            <div class="card-icon">
+              <i class="material-icons">list</i>
+            </div>
+            <h4 class="card-title">Datos Contador</h4>
+          </div>
+          <div class="card-body ">
+            <form [formGroup]="contadorForm" class="form-horizontal">
+
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">NIT del contador (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field [ngClass]="{'has-success':validNIT===true}" [ngClass]="displayFieldCss(contadorForm, 'nitContador')">
+                      <input placeholder="Ingrese NIT del contador" class="form-control" type="text" name="nitContador"
+                        (ngModelChange)="nitValidation($event)" matInput formControlName="nitContador" maxlength="30" required/>
+                      <mat-error *ngIf="contadorForm.controls['nitContador'].hasError('required')">
+                        Campo obligatorio.
+                      </mat-error>
+                      <mat-error *ngIf="contadorForm.controls['nitContador'].hasError('minlength')">
+                        Mínimo 2 caracteres.
+                      </mat-error>
+                      <mat-error *ngIf="contadorForm.controls['nitContador'].hasError('pattern')">
+                        Ingresar números y letras.
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-error *ngIf="validNitType">
+                      Error. El NIT es inválido.
+                    </mat-error>
+                    <mat-error *ngIf="validExiste">
+                      Error. El NIT no existe en la SAT.
+                    </mat-error>
+                    <mat-error *ngIf="validFechaFallecimiento">
+                      Error. El NIT se encuentra inactivo por fecha de fallecimiento.
+                    </mat-error>
+                    <mat-error *ngIf="validEstadoNit">
+                      Error. El NIT no está Activo.
+                    </mat-error>
+                    <mat-error *ngIf="validRegistroContadores">
+                      Error: El NIT no se encuentra inscrito en el registro de Contadores o Auditores.
+                    </mat-error>
+                    <mat-error *ngIf="validEstadoContador">
+                      Error. El NIT ingresado se encuentra inactivo en el registro de Contadores o Auditores.
+                    </mat-error>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Nombres y apellidos</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Nombres y apellidos" class="form-control" type="text" name="nombresApellidosCont"
+                        matInput formControlName="nombresApellidosCont" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Estado</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field>
+                      <input placeholder="Estado" class="form-control" type="text" name="estado" matInput
+                        formControlName="estado" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fecha de nombramiento por el contribuyente -->
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Fecha de nombramiento por el contribuyente (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <mat-form-field [ngClass]="{'has-success':validFecha===true}" [ngClass]="displayFieldCss(contadorForm, 'fechaNombramiento')">
+                    <input matInput [min]="fechaMinima" [max]="fechaMaxima" [matDatepicker]="pickerConstitucion"
+                      placeholder="Fecha de nombramiento por el contribuyente" formControlName="fechaNombramiento"
+                      (change)="onChangeFechaNombramiento($event)" (dateChange)="onChangeFechaNombramiento($event)"
+                      required>
+                    <mat-datepicker-toggle matSuffix [for]="pickerConstitucion"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerConstitucion> </mat-datepicker>
+                    <mat-error *ngIf="contadorForm.controls['fechaNombramiento'].hasError('required')">
+                      Campo obligatorio.
+                    </mat-error>
+                    <mat-error *ngIf="contadorForm.controls['fechaNombramiento'].hasError('incorrecto')">
+                      {{txtError}}
+                    </mat-error>
+                    <mat-error *ngIf="contadorForm.controls['fechaNombramiento'].hasError('matDatepickerMax')">La fecha no
+                      puede ser mayor al año actual</mat-error>
+                    <mat-error *ngIf="contadorForm.controls['fechaNombramiento'].hasError('matDatepickerMin')">La fecha
+                      debe ser mayor a 1900</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Fecha de nombramiento por el contribuyente -->
+
+              <div class="row justify-content-center">
+                <div class="col-sm-2">
+                  <div class="form-group">
+                    <label layout-align="start">Tipo de prestación de servicio (*)</label>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="form-group">
+                    <mat-form-field class="example-full-width has-label" [ngClass]="{'has-success':validPrestacion===true}"
+                      [ngClass]="displayFieldCss(contadorForm, 'tipoPrestServicio')">
+                      <mat-select formControlName="tipoPrestServicio" (selectionChange)="tipoPresentaValidation($event.value)"
+                        placeholder="Tipo de prestación de servicio" required>
+                        <mat-option *ngFor="let tipoPrestaServicio of listaTiposPrestaServ" [value]="tipoPrestaServicio.codigo">
+                          {{ tipoPrestaServicio.nombre }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="contadorForm.controls['tipoPrestServicio'].hasError('required')">
+                        Campo obligatorio.
+                      </mat-error>
+                    </mat-form-field>
+                    <mat-error *ngIf="validActividadEconomica">
+                      Error: La actividad económica del contador no corresponde al servicio seleccionado.
+                    </mat-error>
+                    <mat-error *ngIf="validISR">
+                      Error: La afiliación del contador no corresponde al servicio seleccionado.
+                    </mat-error>
+                    <mat-error *ngIf="validEstablecimientos">
+                      Error: El contador ingresado no cuenta con establecimientos activos.
+                    </mat-error>
+                    <mat-error *ngIf="validIVA">
+                      Error: El contador no se encuentra afiliado al IVA.
+                    </mat-error>
+                    <mat-error *ngIf="validFacturas">
+                      Error: El contador no cuenta con facturas autorizadas vigentes.
+                    </mat-error>
+                    <mat-error *ngIf="validOmiso">
+                      Error: El contador se encuentra omiso.
+                    </mat-error>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row justify-content-center">
+                <!-- boton continuar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" (click)="validacionesGenerales()">Verificar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton agregar -->
+
+                <!-- boton limpiar -->
+                <div class="col-sm-16">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-blue-sat btn-fill" (click)="inicializarForma()">limpiar
+                    </button>
+                  </div>
+                </div>
+                <!-- boton limpiar -->
+
+
+
+              </div>
+              <div class="row justify-content-center">
+                <p *ngIf="!(contadorForm.valid)" class="text-danger">Debe completar los campos obligatorios *</p>
+              </div>
+
+
+
+
+
+
+            </form>
+
+            <!-- <hr>
+            <pre>Status del formulario Padre: {{ contadorForm.status | json }}</pre>
+            <hr>-->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
